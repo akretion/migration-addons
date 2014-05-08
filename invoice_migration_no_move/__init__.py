@@ -20,24 +20,6 @@
 #
 ###############################################################################
 
-{'name': 'Invoice Migration',
- 'version': '0.0.1',
- 'author': 'Akretion',
- 'website': 'www.akretion.com',
- 'license': 'AGPL-3',
- 'category': 'Generic Modules',
- 'description': """
-    Base module for importing an historique of invoice into OpenERP
- """,
- 'depends': [
-     'account',
- ],
- 'update_xml': [
- ],
- 'installable': True,
- 'application': True,
-}
-
-
-
+from . import invoice
+from . import account
 

@@ -20,29 +20,30 @@
 #
 ###############################################################################
 
+{'name': 'Invoice Migration',
+ 'version': '0.0.1',
+ 'author': 'Akretion',
+ 'website': 'www.akretion.com',
+ 'license': 'AGPL-3',
+ 'category': 'Generic Modules',
+ 'description': """
+ Becareful, this module will impact the move creation !
+ If the option 'no_move_line' have been set on the fiscalyear, the invoice
+ generated for this fiscalyear will not generate account_move.
+ After the Migration process this module MUST BE uninstalled !!
+ Indeed as in production you never never never want this process,
+ so you have to uninstall it to avoid a potential trouble with other module
+ """,
+ 'depends': [
+     'invoice_base_migration',
+ ],
+ 'update_xml': [
+     'account_view.xml',
+ ],
+ 'installable': True,
+ 'application': True,
+}
 
-class account_invoice(orm.Model):
-    _inherit = 'account.invoice'
-   
-    def _get_invoice_number(self, cr, uid, ids, field_name, args, context=None):
-        result = {}
-        for invoice in self.browse(cr, uid, ids, context=context):
-            if invoice.migrated:
-                result[invoice.id] = invoice.internal_number
-            else:
-                result[invoice.id] = invoice.move_id.name
-        return result
-
-    _columns = {
-        'migrated': fields.boolean('Migrated Invoice'),
-        'number': fields.function(_get_invoice_number,
-                            string='Number',
-                            type='char',
-                            store=True,
-                            ),
-    }
-
-    #TODO do not generate the move when validating the sale order
 
 
 

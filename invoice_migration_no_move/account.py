@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-#   Module for OpenERP 
-#   Copyright (C) 2013 Akretion (http://www.akretion.com).
+#   Module for OpenERP
+#   Copyright (C) 2014 Akretion (http://www.akretion.com).
 #   @author Sébastien BEAU <sebastien.beau@akretion.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -20,5 +20,16 @@
 #
 ###############################################################################
 
-import invoice
+from openerp.osv import fields, orm
 
+
+class AccountFiscalyear(orm.Model):
+    _inherit = 'account.fiscalyear'
+    
+    _columns = {
+        'no_move_line': fields.boolean(
+            'No Move Line',
+            help=('Tic that box if this fiscal year is not use '
+                  'for accounting purpose but only for having '
+                  'invoice generated from migrated data')),
+    }
