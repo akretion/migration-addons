@@ -90,14 +90,21 @@ class AccountInvoice(orm.Model):
                 ], context=context)
             ids = self.search(cr, uid, [
                 ['period_id', 'in', no_move_period_ids],
+                ['move_id', '!=', None],
                 ], context=context)
-        read_invoices = self.read(cr, uid, ids, context=context)
-        move_ids = [inv['move_id'][0] for inv in read_invoices if inv['move_id']]
-        self.write(cr, uid, ids, {'move_id': None, 'migrated': True}, context=context)
-        posted_move_ids = move_obj.search(cr, uid, [
-            ['id', 'in', move_ids],
-            ['state', '!=', 'draft'],
-            ], context=context)
-        move_obj.button_cancel(cr, uid, posted_move_ids, context=context)
-        move_obj.unlink(cr, uid, move_ids, context=context)
+       	_logger.info('Migrate %s invoice' %len(ids))
+        while ids:
+            process_ids = ids[:100]
+            ids = ids[100:]
+       	    _logger.info('Start migrating 100 invoices, %s invoice remaining' %len(ids))
+            read_invoices = self.read(cr, uid, process_ids, context=context)
+            move_ids = [inv['move_id'][0] for inv in read_invoices if inv['move_id']]
+            self.write(cr, uid, process_ids, {'move_id': None, 'migrated': True}, context=context)
+            posted_move_ids = move_obj.search(cr, uid, [
+                ['id', 'in', move_ids],
+                ['state', '!=', 'draft'],
+                ], context=context)
+            move_obj.button_cancel(cr, uid, posted_move_ids, context=context)
+            move_obj.unlink(cr, uid, move_ids, context=context)
+            cr.commit()
         return True
